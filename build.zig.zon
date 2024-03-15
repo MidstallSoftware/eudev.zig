@@ -1,0 +1,11 @@
+.{
+    .name = "eudev.zig",
+    .version = "3.2.14",
+    .paths = .{"."},
+    .dependencies = .{
+        .eudev = .{
+            .url = "https://github.com/eudev-project/eudev/releases/download/v3.2.14/eudev-3.2.14.tar.gz",
+            .hash = "12207490f36e8d92099ce7dce1c7076b53c02bd1f06e09c59f2531e78fbf168d73ae",
+        },
+    },
+}
