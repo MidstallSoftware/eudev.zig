@@ -23,6 +23,12 @@ pub fn build(b: *std.Build) !void {
 
     const source = b.dependency("eudev", .{});
 
+    const selinux = b.dependency("selinux", .{
+        .target = target,
+        .optimize = optimize,
+        .linkage = linkage,
+    });
+
     const configHeader = b.addConfigHeader(.{}, .{
         .HAVE_DECL_GETRANDOM = 0,
         .HAVE_DECL_STRNDUPA = 1,
@@ -42,6 +48,7 @@ pub fn build(b: *std.Build) !void {
         .UDEV_VERSION = "3.2.14",
         ._GNU_SOURCE = 1,
         .__USE_GNU = 1,
+        .HAVE_SELINUX = 1,
     });
 
     const libshared = b.addStaticLibrary(.{
@@ -72,7 +79,6 @@ pub fn build(b: *std.Build) !void {
             "path-util.c",
             "process-util.c",
             "random-util.c",
-            "selinux-util.c",
             "siphash24.c",
             "smack-util.c",
             "strbuf.c",
@@ -86,6 +92,14 @@ pub fn build(b: *std.Build) !void {
             "virt.c",
         },
     });
+
+    libshared.addCSourceFile(.{
+        .file = .{
+            .path = "src/shared/selinux-util.c",
+        },
+    });
+
+    libshared.linkLibrary(selinux.artifact("selinux"));
 
     const libudev = std.Build.Step.Compile.create(b, .{
         .name = "udev",
